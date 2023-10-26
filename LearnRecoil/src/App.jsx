@@ -1,18 +1,16 @@
-import { useContext, useState, createContext } from 'react'
+// import { useContext, useState, createContext } from 'react'
+
+import {RecoilRoot, useSetRecoilState, useRecoilValue, atom } from 'recoil'
 
 
-// now doing by context api
+// now doing by recoil
 
-const CountContext = createContext();
 
 function App() {
-  const [count, setCount] = useState(0)
+
 
   return (
-    <CountContext.Provider value={{
-      count: count,
-      setCount: setCount
-    }}>
+  <RecoilRoot>
       <div style={{width: "100vw", height: "100vh", backgroundColor: "skyblue", display: "flex", justifyContent: "center" }}>
        <div style={{width: "500px",height: "200px", backgroundColor: "white"}}>
           <h1 style={{textAlign: "center", maringBottom: "10px", color: "black", fontSize: "20px"}}>Counter app</h1>
@@ -20,7 +18,7 @@ function App() {
           <CountComponent />
         </div>
       </div>    
-    </CountContext.Provider>
+    </RecoilRoot>
   )
 }
 
@@ -32,10 +30,10 @@ function Buttons(){
 }
 
 function Increase(){
-  const {count, setCount} = useContext(CountContext)
+  const setCount = useSetRecoilState(countState)
   return <div>
     <button onClick={()=>{
-      setCount(count+1)
+      setCount(existingCount=> existingCount+1)
     }} style={{marginLeft: "20px",padding: "10px", backgroundColor: "black", border: "none", borderRadius: "6px"}}>
       Increase counter
     </button>
@@ -43,20 +41,25 @@ function Increase(){
 }
 
 function Decrease(){
-  const {count, setCount} = useContext(CountContext)
+  const setCount = useSetRecoilState(countState)
   return <div>
     <button onClick={()=>{
-      setCount(count-1)
+      setCount(existingCount => existingCount-1)
     }} style={{marginRight: "20px",padding: "10px", backgroundColor: "black", border: "none", borderRadius: "6px"}}>
       Decrease Counter
     </button>
   </div>
 }
 function CountComponent() {
-  const {count} = useContext(CountContext)
+  const count = useRecoilValue(countState)
   return  <div>
     <h1 style={{textAlign: "center", marginTop: "10px", color: "black"}}>{count}</h1>
   </div>
 }
+
+const countState = atom({
+  key: 'countState',
+  default: 0
+})
 
 export default App
